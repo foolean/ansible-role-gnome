@@ -13,7 +13,69 @@
       become: true
       ansible.builtin.package:
         name: 'gdm'
+        state: "{{ gnome_gdm_state }}"
+
+    - name: CIS | Ensure GDM login banner is configured (part-1)
+      become: true
+      ansible.builtin.template:
+        src: 'etc/dconf/profile/gdm.j2'
+        dest: '/etc/dconf/profile/gdm'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify: Update dconf
+      when:
+        - gnome_gdm_state == 'present'
+
+    - name: CIS | Ensure GDM login banner is configured (part-2)
+      become: true
+      ansible.builtin.template:
+        src: 'etc/dconf/db/gdm.d/01-banner-message.j2'
+        dest: '/etc/dconf/db/gdm.d/01-banner-message'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify: Update dconf
+      when:
+        - gnome_gdm_state == 'present'
+
+    - name: CIS | Ensure last logged in user display is disabled
+      become: true
+      ansible.builtin.template:
+        src: 'etc/dconf/db/gdm.d/00-login-screen.j2'
+        dest: '/etc/dconf/db/gdm.d/00-login-screen'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify: Update dconf
+      when:
+        - gnome_gdm_state == 'present'
+
+    - name: CIS | Ensure XDMCP is not enabled
+      become: true
+      community.general.ini_file:
+        path: '/etc/gdm/custom.conf'
+        section: 'xdmcp'
+        option: 'Enable'
         state: absent
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify: Update dconf
+      when:
+        - gnome_gdm_state == 'present'
+
+    - name: CIS | Ensure automatic mounting of removable media is disabled
+      become: true
+      ansible.builtin.template:
+        src: 'etc/dconf/db/local.d/00-media-automount.j2'
+        dest: '/etc/dconf/db/local.d/00-media-automount'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify: Update dconf
+      when:
+        - gnome_gdm_state == 'present'
 
   # Tags to be applied to this role (block)
   tags:
