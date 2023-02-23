@@ -9,11 +9,11 @@
 - name: Role foolean/gnome
   block:
 
-  - name: CIS | Ensure GNOME Display Manager is removed
-    become: true
-    ansible.builtin.package:
-      name: 'gdm'
-      state: absent
+    - name: CIS | Ensure GNOME Display Manager is removed
+      become: true
+      ansible.builtin.package:
+        name: 'gdm'
+        state: absent
 
   # Tags to be applied to this role (block)
   tags:
