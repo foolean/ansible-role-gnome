@@ -7,3 +7,5 @@
   become: true
   ansible.builtin.command:
     cmd: 'dconf update'
+  when:
+    - gnome_gdm_state == 'present'

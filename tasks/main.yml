@@ -65,7 +65,16 @@
       when:
         - gnome_gdm_state == 'present'
 
-    - name: CIS | Ensure automatic mounting of removable media is disabled
+    - name: CIS | Ensure automatic mounting of removable media is disabled (dir)
+      become: true
+      ansible.builtin.file:
+        name: '/etc/dconf/db/local.d'
+        state: directory
+        owner: 'root'
+        group: 'root'
+        mode: '0755'
+
+    - name: CIS | Ensure automatic mounting of removable media is disabled (config)
       become: true
       ansible.builtin.template:
         src: 'etc/dconf/db/local.d/00-media-automount.j2'
@@ -74,8 +83,6 @@
         group: 'root'
         mode: '0644'
       notify: Update dconf
-      when:
-        - gnome_gdm_state == 'present'
 
   # Tags to be applied to this role (block)
   tags:
