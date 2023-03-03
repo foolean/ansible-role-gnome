@@ -9,10 +9,17 @@
 - name: Role foolean/gnome
   block:
 
+    - name: Set OS variables
+      ansible.builtin.include_vars:
+        file: "{{ item }}"
+      with_first_found:
+        - "{{ ansible_os_family|lower }}.yml"
+        - "default.yml"
+
     - name: CIS | Ensure GNOME Display Manager is removed
       become: true
       ansible.builtin.package:
-        name: 'gdm'
+        name: "{{ gnome_packages }}"
         state: "{{ gnome_gdm_state }}"
 
     - name: CIS | Ensure GDM login banner is configured (part-1)
